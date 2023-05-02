@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<febio_spec version="4.0">
+	<Module type="solid"/>
+	<Control>
+		<analysis>STATIC</analysis>
+		<time_steps>20082</time_steps>
+		<step_size>0.01</step_size>
+		<plot_zero_state>0</plot_zero_state>
+		<plot_range>0,-1</plot_range>
+		<plot_level>PLOT_MUST_POINTS</plot_level>
+		<output_level>OUTPUT_MUST_POINTS</output_level>
+		<plot_stride>1</plot_stride>
+		<adaptor_re_solve>1</adaptor_re_solve>
+		<time_stepper type="default">
+			<max_retries>5</max_retries>
+			<opt_iter>11</opt_iter>
+			<dtmin>0</dtmin>
+			<dtmax lc="3">1</dtmax>
+			<aggressiveness>0</aggressiveness>
+			<cutback>0.5</cutback>
+			<dtforce>0</dtforce>
+		</time_stepper>
+		<solver type="solid">
+			<symmetric_stiffness>symmetric</symmetric_stiffness>
+			<equation_scheme>staggered</equation_scheme>
+			<equation_order>default</equation_order>
+			<optimize_bw>0</optimize_bw>
+			<lstol>0.9</lstol>
+			<lsmin>0.01</lsmin>
+			<lsiter>5</lsiter>
+			<max_refs>15</max_refs>
+			<check_zero_diagonal>0</check_zero_diagonal>
+			<zero_diagonal_tol>0</zero_diagonal_tol>
+			<force_partition>0</force_partition>
+			<reform_each_time_step>1</reform_each_time_step>
+			<reform_augment>0</reform_augment>
+			<diverge_reform>1</diverge_reform>
+			<min_residual>1e-20</min_residual>
+			<max_residual>0</max_residual>
+			<dtol>0.001</dtol>
+			<etol>0.01</etol>
+			<rtol>0</rtol>
+			<rhoi>-2</rhoi>
+			<alpha>1</alpha>
+			<beta>0.25</beta>
+			<gamma>0.5</gamma>
+			<logSolve>0</logSolve>
+			<arc_length>0</arc_length>
+			<arc_length_scale>0</arc_length_scale>
+			<qn_method type="BFGS">
+				<max_ups>10</max_ups>
+				<max_buffer_size>0</max_buffer_size>
+				<cycle_buffer>1</cycle_buffer>
+				<cmax>100000</cmax>
+			</qn_method>
+		</solver>
+	</Control>
+	<Globals>
+		<Constants>
+			<T>0</T>
+			<P>0</P>
+			<R>8.31446</R>
+			<Fc>96485.3</Fc>
+		</Constants>
+	</Globals>
+	<Material>
+		<material id="1" name="Reactive" type="reactive viscoelastic">
+			<density>1</density>
+			<wmin>0.05</wmin>
+			<kinetics>1</kinetics>
+			<trigger>0</trigger>
+			<emin>0.01</emin>
+			<elastic type="HGO unconstrained">
+				<c>5.2</c>
+				<k1>1.08</k1>
+				<k2>12.18</k2>
+				<kappa>0.279</kappa>
+				<gamma>27.52</gamma>
+				<k>1000000</k>
+			</elastic>
+			<bond type="neo-Hookean">
+				<E>5</E>
+				<v>0.3</v>
+			</bond>
+			<relaxation type="relaxation-exponential">
+				<tau>10</tau>
+			</relaxation>
+			<recruitment type="CDF power">
+				<mu0>1</mu0>
+				<mu1>1</mu1>
+				<alpha>1.2</alpha>
+				<scale>0.01</scale>
+			</recruitment>
+		</material>
+	</Material>
+	<Mesh>
+		<Nodes name="Object1">
+			<node id="1">-0.5,-0.5,0</node>
+			<node id="2">0.5,-0.5,0</node>
+			<node id="3">0.5,0.5,0</node>
+			<node id="4">-0.5,0.5,0</node>
+			<node id="5">-0.5,-0.5,1</node>
+			<node id="6">0.5,-0.5,1</node>
+			<node id="7">0.5,0.5,1</node>
+			<node id="8">-0.5,0.5,1</node>
+		</Nodes>
+		<Elements type="hex8" name="Part1">
+			<elem id="1">1,2,3,4,5,6,7,8</elem>
+		</Elements>
+		<Surface name="PrescribedDisplacement4">
+			<quad4 id="1">2,3,7,6</quad4>
+		</Surface>
+		<Surface name="PrescribedDisplacement5">
+			<quad4 id="1">3,4,8,7</quad4>
+		</Surface>
+		<Surface name="PrescribedDisplacement6">
+			<quad4 id="1">4,1,5,8</quad4>
+		</Surface>
+		<Surface name="PrescribedDisplacement7">
+			<quad4 id="1">1,2,6,5</quad4>
+		</Surface>
+		<Surface name="ZeroDisplacement5">
+			<quad4 id="1">5,6,7,8</quad4>
+		</Surface>
+	</Mesh>
+	<MeshDomains>
+		<SolidDomain name="Part1" mat="Reactive"/>
+	</MeshDomains>
+	<Boundary>
+		<bc name="Apply_Xpos" node_set="@surface:PrescribedDisplacement4" type="prescribed displacement">
+			<dof>x</dof>
+			<value lc="1">0.1382</value>
+			<relative>0</relative>
+		</bc>
+		<bc name="Apply_Ypos" node_set="@surface:PrescribedDisplacement5" type="prescribed displacement">
+			<dof>y</dof>
+			<value lc="2">0.3482</value>
+			<relative>0</relative>
+		</bc>
+		<bc name="Apply_Xneg" node_set="@surface:PrescribedDisplacement6" type="prescribed displacement">
+			<dof>x</dof>
+			<value lc="1">-0.1382</value>
+			<relative>0</relative>
+		</bc>
+		<bc name="Apply_Yneg" node_set="@surface:PrescribedDisplacement7" type="prescribed displacement">
+			<dof>y</dof>
+			<value lc="2">-0.3482</value>
+			<relative>0</relative>
+		</bc>
+		<bc name="ZeroDisplacement5" node_set="@surface:ZeroDisplacement5" type="zero displacement">
+			<x_dof>0</x_dof>
+			<y_dof>0</y_dof>
+			<z_dof>1</z_dof>
+		</bc>
+	</Boundary>
+	<LoadData>
+		<load_controller id="1" name="LC1" type="loadcurve">
+			<interpolate>LINEAR</interpolate>
+			<extend>CONSTANT</extend>
+			<points>
+				<pt> 0.000,  0.000</pt>
+				<pt> 1.000,  0.040</pt>
+				<pt> 2.000,  0.080</pt>
+				<pt> 3.000,  0.120</pt>
+				<pt> 4.000,  0.160</pt>
+				<pt> 5.000,  0.200</pt>
+				<pt> 6.000,  0.240</pt>
+				<pt> 7.000,  0.280</pt>
+				<pt> 8.000,  0.321</pt>
+				<pt> 9.000,  0.360</pt>
+				<pt>10.000,  0.400</pt>
+				<pt>11.000,  0.440</pt>
+				<pt>12.000,  0.481</pt>
+				<pt>13.000,  0.521</pt>
+				<pt>14.000,  0.561</pt>
+				<pt>15.000,  0.601</pt>
+				<pt>16.000,  0.641</pt>
+				<pt>17.000,  0.681</pt>
+				<pt>18.000,  0.721</pt>
+				<pt>19.000,  0.761</pt>
+				<pt>20.000,  0.801</pt>
+				<pt>21.000,  0.841</pt>
+				<pt>22.000,  0.881</pt>
+				<pt>23.000,  0.921</pt>
+				<pt>24.000,  0.961</pt>
+				<pt>25.000,  1.000</pt>
+			</points>
+		</load_controller>
+		<load_controller id="2" name="LC2" type="loadcurve">
+			<interpolate>LINEAR</interpolate>
+			<extend>CONSTANT</extend>
+			<points>
+				<pt> 0.000,  0.000</pt>
+				<pt> 1.000,  0.038</pt>
+				<pt> 2.000,  0.078</pt>
+				<pt> 3.000,  0.118</pt>
+				<pt> 4.000,  0.158</pt>
+				<pt> 5.000,  0.198</pt>
+				<pt> 6.000,  0.238</pt>
+				<pt> 7.000,  0.278</pt>
+				<pt> 8.000,  0.318</pt>
+				<pt> 9.000,  0.358</pt>
+				<pt>10.000,  0.399</pt>
+				<pt>11.000,  0.439</pt>
+				<pt>12.000,  0.479</pt>
+				<pt>13.000,  0.519</pt>
+				<pt>14.000,  0.559</pt>
+				<pt>15.000,  0.599</pt>
+				<pt>16.000,  0.639</pt>
+				<pt>17.000,  0.679</pt>
+				<pt>18.000,  0.719</pt>
+				<pt>19.000,  0.759</pt>
+				<pt>20.000,  0.799</pt>
+				<pt>21.000,  0.839</pt>
+				<pt>22.000,  0.880</pt>
+				<pt>23.000,  0.920</pt>
+				<pt>24.000,  0.960</pt>
+				<pt>25.000,  1.000</pt>
+			</points>
+		</load_controller>
+		<load_controller id="3" name="LC3" type="loadcurve">
+			<interpolate>LINEAR</interpolate>
+			<extend>CONSTANT</extend>
+			<points>
+				<pt> 0.000, 0.1</pt>
+				<pt> 1.000, 0.1</pt>
+				<pt> 2.000, 0.1</pt>
+				<pt> 3.000, 0.1</pt>
+				<pt> 4.000, 0.1</pt>
+				<pt> 5.000, 0.1</pt>
+				<pt> 6.000, 0.1</pt>
+				<pt> 7.000, 0.1</pt>
+				<pt> 8.000, 0.1</pt>
+				<pt> 9.000, 0.1</pt>
+				<pt>10.000, 0.1</pt>
+				<pt>11.000, 0.1</pt>
+				<pt>12.000, 0.1</pt>
+				<pt>13.000, 0.1</pt>
+				<pt>14.000, 0.1</pt>
+				<pt>15.000, 0.1</pt>
+				<pt>16.000, 0.1</pt>
+				<pt>17.000, 0.1</pt>
+				<pt>18.000, 0.1</pt>
+				<pt>19.000, 0.1</pt>
+				<pt>20.000, 0.1</pt>
+				<pt>21.000, 0.1</pt>
+				<pt>22.000, 0.1</pt>
+				<pt>23.000, 0.1</pt>
+				<pt>24.000, 0.1</pt>
+				<pt>25.000, 0.1</pt>
+				<pt>25.820, 0.1</pt>
+				<pt>26.820, 0.1</pt>
+				<pt>27.820, 0.1</pt>
+				<pt>28.820, 0.1</pt>
+				<pt>29.820, 0.1</pt>
+				<pt>30.820, 0.1</pt>
+				<pt>31.820, 0.1</pt>
+				<pt>32.820, 0.1</pt>
+				<pt>33.820, 0.1</pt>
+				<pt>34.820, 0.1</pt>
+				<pt>35.820, 0.1</pt>
+				<pt>36.820, 0.1</pt>
+				<pt>37.820, 0.1</pt>
+				<pt>38.820, 0.1</pt>
+				<pt>39.820, 0.1</pt>
+				<pt>40.820, 0.1</pt>
+				<pt>41.820, 0.1</pt>
+				<pt>42.820, 0.1</pt>
+				<pt>43.820, 0.1</pt>
+				<pt>44.820, 0.1</pt>
+				<pt>45.820, 0.1</pt>
+				<pt>46.820, 0.1</pt>
+				<pt>47.820, 0.1</pt>
+				<pt>48.820, 0.1</pt>
+				<pt>49.820, 0.1</pt>
+				<pt>50.820, 0.1</pt>
+				<pt>51.820, 0.1</pt>
+				<pt>52.820, 0.1</pt>
+				<pt>53.820, 0.1</pt>
+				<pt>54.820, 0.1</pt>
+				<pt>55.820, 0.1</pt>
+				<pt>56.820, 0.1</pt>
+				<pt>57.820, 0.1</pt>
+				<pt>58.820, 0.1</pt>
+				<pt>59.820, 0.1</pt>
+				<pt>60.820, 0.1</pt>
+				<pt>61.820, 0.1</pt>
+				<pt>62.820, 0.1</pt>
+				<pt>63.820, 0.1</pt>
+				<pt>64.820, 0.1</pt>
+				<pt>65.820, 0.1</pt>
+				<pt>66.820, 0.1</pt>
+				<pt>67.820, 0.1</pt>
+				<pt>68.820, 0.1</pt>
+				<pt>69.820, 0.1</pt>
+				<pt>70.820, 0.1</pt>
+				<pt>71.820, 0.1</pt>
+				<pt>72.820, 0.1</pt>
+				<pt>73.820, 0.1</pt>
+				<pt>74.820, 0.1</pt>
+				<pt>75.820, 0.1</pt>
+				<pt>76.820, 0.1</pt>
+				<pt>77.820, 0.1</pt>
+				<pt>78.820, 0.1</pt>
+				<pt>79.820, 0.1</pt>
+				<pt>80.820, 0.1</pt>
+				<pt>81.820, 0.1</pt>
+				<pt>82.820, 0.1</pt>
+				<pt>83.820, 0.1</pt>
+				<pt>84.820, 0.1</pt>
+				<pt>85.820, 0.1</pt>
+				<pt>86.820, 0.1</pt>
+				<pt>87.820, 0.1</pt>
+				<pt>88.820, 0.1</pt>
+				<pt>89.820, 0.1</pt>
+				<pt>90.820, 0.1</pt>
+				<pt>91.820, 0.1</pt>
+				<pt>92.820, 0.1</pt>
+				<pt>93.820, 0.1</pt>
+				<pt>94.820, 0.1</pt>
+				<pt>95.820, 0.1</pt>
+				<pt>96.820, 0.1</pt>
+				<pt>97.820, 0.1</pt>
+				<pt>98.820, 0.1</pt>
+				<pt>99.820, 0.1</pt>
+				<pt>100.820, 0.1</pt>
+				<pt>101.820, 0.1</pt>
+				<pt>102.820, 0.1</pt>
+				<pt>103.820, 0.1</pt>
+				<pt>104.820, 0.1</pt>
+				<pt>105.820, 0.1</pt>
+				<pt>106.820, 0.1</pt>
+				<pt>107.820, 0.1</pt>
+				<pt>108.820, 0.1</pt>
+				<pt>109.820, 0.1</pt>
+				<pt>110.820, 0.1</pt>
+				<pt>111.820, 0.1</pt>
+				<pt>112.820, 0.1</pt>
+				<pt>113.820, 0.1</pt>
+				<pt>114.820, 0.1</pt>
+				<pt>115.820, 0.1</pt>
+				<pt>116.820, 0.1</pt>
+				<pt>117.820, 0.1</pt>
+				<pt>118.820, 0.1</pt>
+				<pt>119.820, 0.1</pt>
+				<pt>120.820, 0.1</pt>
+				<pt>121.820, 0.1</pt>
+				<pt>122.820, 0.1</pt>
+				<pt>123.820, 0.1</pt>
+				<pt>124.820, 0.1</pt>
+				<pt>125.820, 0.1</pt>
+				<pt>126.820, 0.1</pt>
+				<pt>127.820, 0.1</pt>
+				<pt>128.820, 0.1</pt>
+				<pt>129.820, 0.1</pt>
+				<pt>130.820, 0.1</pt>
+				<pt>131.820, 0.1</pt>
+				<pt>132.820, 0.1</pt>
+				<pt>133.820, 0.1</pt>
+				<pt>134.820, 0.1</pt>
+				<pt>135.820, 0.1</pt>
+				<pt>136.820, 0.1</pt>
+				<pt>137.820, 0.1</pt>
+				<pt>138.820, 0.1</pt>
+				<pt>139.820, 0.1</pt>
+				<pt>140.820, 0.1</pt>
+				<pt>141.820, 0.1</pt>
+				<pt>142.820, 0.1</pt>
+				<pt>143.820, 0.1</pt>
+				<pt>144.820, 0.1</pt>
+				<pt>145.820, 0.1</pt>
+				<pt>146.820, 0.1</pt>
+				<pt>147.820, 0.1</pt>
+				<pt>148.820, 0.1</pt>
+				<pt>149.820, 0.1</pt>
+				<pt>150.820, 0.1</pt>
+				<pt>151.820, 0.1</pt>
+				<pt>152.820, 0.1</pt>
+				<pt>153.820, 0.1</pt>
+				<pt>154.820, 0.1</pt>
+				<pt>155.820, 0.1</pt>
+				<pt>156.820, 0.1</pt>
+				<pt>157.820, 0.1</pt>
+				<pt>158.820, 0.1</pt>
+				<pt>159.820, 0.1</pt>
+				<pt>160.820, 0.1</pt>
+				<pt>161.820, 0.1</pt>
+				<pt>162.820, 0.1</pt>
+				<pt>163.820, 0.1</pt>
+				<pt>164.820, 0.1</pt>
+				<pt>165.820, 0.1</pt>
+				<pt>166.820, 0.1</pt>
+				<pt>167.820, 0.1</pt>
+				<pt>168.820, 0.1</pt>
+				<pt>169.820, 0.1</pt>
+				<pt>170.820, 0.1</pt>
+				<pt>171.820, 0.1</pt>
+				<pt>172.820, 0.1</pt>
+				<pt>173.820, 0.1</pt>
+				<pt>174.820, 0.1</pt>
+				<pt>175.820, 0.1</pt>
+				<pt>176.820, 0.1</pt>
+				<pt>177.820, 0.1</pt>
+				<pt>178.820, 0.1</pt>
+				<pt>179.820, 0.1</pt>
+				<pt>180.820, 0.1</pt>
+				<pt>181.820, 0.1</pt>
+				<pt>182.820, 0.1</pt>
+				<pt>183.820, 0.1</pt>
+				<pt>184.820, 0.1</pt>
+				<pt>185.820, 0.1</pt>
+				<pt>186.820, 0.1</pt>
+				<pt>187.820, 0.1</pt>
+				<pt>188.820, 0.1</pt>
+				<pt>189.820, 0.1</pt>
+				<pt>190.820, 0.1</pt>
+				<pt>191.820, 0.1</pt>
+				<pt>192.820, 0.1</pt>
+				<pt>193.820, 0.1</pt>
+				<pt>194.820, 0.1</pt>
+				<pt>195.820, 0.1</pt>
+				<pt>196.820, 0.1</pt>
+				<pt>197.820, 0.1</pt>
+				<pt>198.820, 0.1</pt>
+				<pt>199.820, 0.1</pt>
+				<pt>200.820, 0.1</pt>
+			</points>
+		</load_controller>
+	</LoadData>
+	<Output>
+		<plotfile type="febio">
+			<var type="displacement"/>
+			<var type="stress"/>
+			<var type="relative volume"/>
+			<var type="deformation gradient"/>
+			<var type="strong bond SED"/>
+			<var type="weak bond SED"/>
+		</plotfile>
+		<logfile file="outputSR.txt">
+			<element_data data="Fxx;Fyy;sx;sy" format='<element id="%i">%g,%g,%g,%g</element>'></element_data>
+		</logfile>
+	</Output>
+</febio_spec>
