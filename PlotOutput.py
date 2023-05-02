@@ -102,28 +102,10 @@ def ResidualFEB(params):
 
 if __name__ == '__main__':
 
-    num_time = 43
+    num_time = 42
 
-    # bounds = [(1e-6, 10), (1e-6, 50), (1e-6, 50), (1e-6, 0.32)]
+    parameters = [3.468, 11.24, 0.296, 15.21, 0.032, 2, 0.01]
 
-    # bounds = [{'name': 'k1', 'type': 'continuous', 'domain': (0, 50)},
-    #           {'name': 'k2', 'type': 'continuous', 'domain': (0, 50)},
-    #           {'name': 'kappa', 'type': 'continuous', 'domain': (0, 0.33)},
-    #           {'name': 'gamma', 'type': 'continuous', 'domain': (0, 90)}]
-    #           {'name': 'alpha', 'type': 'continuous', 'domain': (0.3, 2)},
-    #           {'name': 'mu1', 'type': 'continuous', 'domain': (0, 0.5)},
-    #           {'name': 'scale', 'type': 'continuous', 'domain': (0.01, 0.08)}]
-
-    bounds = [(1e-6, 50), (1e-6, 50), (1e-6, 0.33), (0, 90), (0.2, 2), (1e-6, 0.5), (0.01, 0.08)]
-
-    result = differential_evolution(ResidualFEB, bounds, disp=True, popsize=5, updating='deferred', recombination=0.4,\
-                                    mutation=0.3, maxiter=25)
-    print(result.x)
-    print(result.fun)
-
-    # num_time = 10
-    #
-    # parameters = [5.21, 12.548, 48.458, 0.15, 0]
     #
     data_exp = np.loadtxt('jobs/experimentSR3.txt')
 
@@ -132,7 +114,7 @@ if __name__ == '__main__':
     FEB_in = 'jobs/BiaxialSRBiaxialModify.feb'
     FEB_out = 'jobs/outputSR.txt'
 
-    UpdateFEB(FEB_template, FEB_new, result.x)
+    UpdateFEB(FEB_template, FEB_new, parameters)
 
     RunMonitorFEB(FEB_new, FEB_out)
 
